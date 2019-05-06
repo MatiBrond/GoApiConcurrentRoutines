@@ -16,6 +16,7 @@ var(
 
 func main(){
 	router.GET("/users/:id", UserController.GetUserFromApiC)
+	router.GET("/userschannel/:id", UserController.GetUserFromApiChannel)
 	router.Run(port)
 }
 
