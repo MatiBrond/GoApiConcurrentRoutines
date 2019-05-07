@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"strconv"
 	"sync"
+	"time"
 )
 
 const(
@@ -130,5 +131,81 @@ func GetUserFromApiChannel(context *gin.Context) {
 	context.JSON(200, &result)
 }
 
+func GetUserFromApiChannelInterface(context *gin.Context) {
 
+	var result UserSite
+	var wg sync.WaitGroup
+	c := make(chan UserSite, 3)
+	var r UserSite
+
+	id := context.Param(paramUserID)
+	userID, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		apiError := &ApiErrors.ApiError{
+			Message: "Fatal URL",
+			Status:  http.StatusBadRequest}
+		context.JSON(apiError.Status, apiError)
+		return
+	}
+
+	user, apiError := User.GetUserFromApi(userID);
+	if apiError != nil {
+		context.JSON(apiError.Status, apiError)
+		return
+	}
+	r.User = user
+	c <- r
+
+	wg.Add(2)
+	go func(){
+		defer wg.Done()
+		var r UserSite
+		site, err1 := Site.GetSiteFromApi(user.SiteID)
+		if err1 != nil {
+			apiError := &ApiErrors.ApiError{
+				Message: "Fatal URL",
+				Status:  http.StatusBadRequest}
+			context.JSON(apiError.Status, apiError)
+			return
+		}
+		r.Site = site
+		c <- r
+	}()
+
+	go func () {
+		defer wg.Done()
+		var r UserSite
+		explosure, err2 := Explosure.GetUserFromApi(user.SiteID)
+		if err2 != nil {
+			apiError := &ApiErrors.ApiError{
+				Message: "Fatal URL",
+				Status:  http.StatusBadRequest}
+			context.JSON(apiError.Status, apiError)
+			return
+		}
+		r.Explosure = explosure
+		c <- r
+	}()
+	
+	for i := 0; i < 3; i++ {
+		select {
+
+		case r := <- c:
+
+			if r.Site != nil{
+				result.Site = r.Site
+			}
+			if r.Explosure != nil{
+				result.Explosure = r.Explosure
+			}
+			if r.User != nil {
+				result.User = r.User
+			}
+		}
+	}
+	<- time.After(time.Second * 9)
+
+	wg.Wait()
+	context.JSON(200, &result)
+}
 

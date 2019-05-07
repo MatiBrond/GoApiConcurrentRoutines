@@ -18,11 +18,9 @@ func GetSiteFromApi( id string) (*Site2.Site, *ApiErrors.ApiError){
 	response, err := http.Get(urlFinal)
 
 	if err != nil {
-
 		return nil, &ApiErrors.ApiError{
 			Message: "Fatal URL",
 			Status: http.StatusBadRequest}
-
 	}
 	data, error := ioutil.ReadAll(response.Body)
 
@@ -34,7 +32,7 @@ func GetSiteFromApi( id string) (*Site2.Site, *ApiErrors.ApiError){
 
 	if err1 := json.Unmarshal([]byte(data), &site); err1 != nil{
 		return nil, &ApiErrors.ApiError{
-			Message: "Id is empty",
+			Message: "Id is empty site",
 			Status: http.StatusBadRequest}
 	}
 	return &site, nil

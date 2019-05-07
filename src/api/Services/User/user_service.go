@@ -34,7 +34,7 @@ func GetUserFromApi(id int64) (*User2.User, *ApiErrors.ApiError){
 
 	if err1 := json.Unmarshal([]byte(data), &user); err1 != nil{
 		return nil, &ApiErrors.ApiError{
-			Message: "Id is empty",
+			Message: "Id is empty user",
 			Status: http.StatusBadRequest}
 	}
 	return &user, nil

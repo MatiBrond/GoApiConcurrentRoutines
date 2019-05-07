@@ -21,7 +21,6 @@ func GetUserFromApi(id string) (*Explosure2.Explosure_level, *ApiErrors.ApiError
 		return nil, &ApiErrors.ApiError{
 			Message: "Fatal URL",
 			Status: http.StatusBadRequest}
-
 	}
 	data, error := ioutil.ReadAll(response.Body)
 	if error != nil{
@@ -32,7 +31,7 @@ func GetUserFromApi(id string) (*Explosure2.Explosure_level, *ApiErrors.ApiError
 
 	if err1 := json.Unmarshal([]byte(data), &explosure_level); err1 != nil{
 		return nil, &ApiErrors.ApiError{
-			Message: "Id is empty",
+			Message: "Id is empty explosure",
 			Status: http.StatusBadRequest}
 	}
 	return &explosure_level, nil
