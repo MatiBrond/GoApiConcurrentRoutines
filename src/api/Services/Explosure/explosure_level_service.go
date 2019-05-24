@@ -1,16 +1,18 @@
-package Explosure
+package explosure
 
 import (
 	"encoding/json"
-	Explosure2 "github.com/mercadolibre/GoApiConcurrentRoutines/src/api/Domain/Explosure"
-	"github.com/mercadolibre/GoApiConcurrentRoutines/src/api/Utils/ApiErrors"
 	"io/ioutil"
 	"net/http"
+
+	Explosure2 "github.com/mercadolibre/GoApiConcurrentRoutines/src/api/domain/explosure"
+	"github.com/mercadolibre/GoApiConcurrentRoutines/src/api/utils/apiErrors"
 )
 
 const urlSite = "https://api.mercadolibre.com/sites/"
+const localUrl = "http://localhost:8089/exposures/"
 
-func GetUserFromApi(id string) (*Explosure2.Explosure_level, *ApiErrors.ApiError){
+func GetExpFromApi(id string) (*Explosure2.Explosure_level, *apiErrors.ApiError) {
 
 	var data []byte
 	var explosure_level Explosure2.Explosure_level
@@ -18,21 +20,47 @@ func GetUserFromApi(id string) (*Explosure2.Explosure_level, *ApiErrors.ApiError
 
 	response, err := http.Get(urlFinal)
 	if err != nil {
-		return nil, &ApiErrors.ApiError{
+		return nil, &apiErrors.ApiError{
 			Message: "Fatal URL",
-			Status: http.StatusBadRequest}
+			Status:  http.StatusBadRequest}
 	}
 	data, error := ioutil.ReadAll(response.Body)
-	if error != nil{
-		return nil, &ApiErrors.ApiError{
+	if error != nil {
+		return nil, &apiErrors.ApiError{
 			Message: "Fallo aca",
-			Status: http.StatusInternalServerError}
+			Status:  http.StatusInternalServerError}
 	}
 
-	if err1 := json.Unmarshal([]byte(data), &explosure_level); err1 != nil{
-		return nil, &ApiErrors.ApiError{
+	if err1 := json.Unmarshal([]byte(data), &explosure_level); err1 != nil {
+		return nil, &apiErrors.ApiError{
 			Message: "Id is empty explosure",
-			Status: http.StatusBadRequest}
+			Status:  http.StatusBadRequest}
+	}
+	return &explosure_level, nil
+}
+
+func GetExpFromMock() (*Explosure2.Explosure_level, *apiErrors.ApiError) {
+
+	var data []byte
+	var explosure_level Explosure2.Explosure_level
+
+	response, err := http.Get(localUrl)
+	if err != nil {
+		return nil, &apiErrors.ApiError{
+			Message: "Fatal URL",
+			Status:  http.StatusBadRequest}
+	}
+	data, error := ioutil.ReadAll(response.Body)
+	if error != nil {
+		return nil, &apiErrors.ApiError{
+			Message: "Fallo aca",
+			Status:  http.StatusInternalServerError}
+	}
+
+	if err1 := json.Unmarshal([]byte(data), &explosure_level); err1 != nil {
+		return nil, &apiErrors.ApiError{
+			Message: "Id is empty explosure",
+			Status:  http.StatusBadRequest}
 	}
 	return &explosure_level, nil
 }

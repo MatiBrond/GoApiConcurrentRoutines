@@ -1,7 +1,7 @@
-package User
+package user
 
 type User struct {
-	ID               int64    `json:"id"`
+	ID               int64  `json:"id"`
 	Nickname         string `json:"nickname"`
 	RegistrationDate string `json:"registration_date"`
 	CountryID        string `json:"country_id"`
@@ -37,4 +37,3 @@ type User struct {
 		SiteStatus string `json:"site_status"`
 	} `json:"status"`
 }
-

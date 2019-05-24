@@ -1,4 +1,4 @@
-package Explosure
+package explosure
 
 type Explosure_level []struct {
 	ID                       string `json:"id"`
